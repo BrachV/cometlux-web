@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Scenario</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section>
+        <h2 class="title">Scénarios disponibles</h2>
+        <input type="text" id="recherche" onkeyup="myFunction()" placeholder="Search for names..">
+        <div class="container container-scenario" id="scenario_list">
+            <% for(var i=0; i<data.length; i++) {%>
+                <div class="scenario">
+                    <h1><%= i+1 %></h3>
+                    <div>
+                        <h3><%= data[i]['nom'] %></h3>
+                        <p><%= data[i]['description'] %></p>
+                        
+                        <button class="status"><%= data[i]['etat'] === 0 ? 'Inactif' : 'Actif' %></button>
+
+                        <button class="planif">Planifier</button>
+
+                    </div>
+                </div>
+             <% } %>
+            <!-- <div class="scenario">
+                <h1>1</h3>
+                <div>
+                    <h3>Fête de fin d'année</h3>
+                    <p>Pour un super éclairage</p>
+                    <button class="status">Inactif</button>
+                    <button class="planif">Planifier</button>
+
+                </div>
+            </div>
+            <div class="scenario">
+                <h1>1</h3>
+                <div>
+                    <h3>pe de fin d'année</h3>
+                    <p>Pour un super éclairage wouhou</p>
+                    <button class="status">Inactif</button>
+                    <button class="planif">Planifier</button>
+
+                </div>
+            </div>
+            <div class="scenario">
+                <h1>1</h3>
+                <div>
+                    <h3>Fête de fin d'année</h3>
+                    <p>Pour un super éclairage</p>
+                    <button class="status">Actif</button>
+                    <button class="planif">Planifier</button>
+
+                </div>
+            </div>
+            <div class="scenario">
+                <h1>1</h3>
+                <div>
+                    <h3>Fête de fin d'année</h3>
+                    <p>Pour un super éclairage</p>
+                    <button class="status">Inactif</button>
+                    <button class="planif">Planifier</button>
+                </div>
+            </div> -->
+        </div>
+        <script>
+            function myFunction() {
+              // Declare variables
+              var input, filter, item, li, h3, i, txtValue;
+              input = document.getElementById('recherche');
+              filter = input.value.toUpperCase();
+              item = document.getElementById("scenario_list");
+              div = item.getElementsByTagName('div');
+            
+              // Loop through all divst items, and hide those who don't match the search query
+              for (i = 0; i < div.length; i++) {
+                console.log(div)
+                h3 = div[i].getElementsByTagName("h3")[0];
+                txtValue = h3.textContent || h3.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                  div[i].style.display = "";
+                } else {
+                  div[i].style.display = "none";
+                }
+              }
+            }
+        </script>
+    </section>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Accueil</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section style="padding-top: 40px;">
+        <h2 class="title">Bienvenue</h2>
+        <section class="container">
+            <div class="items">
+                <div class="lampe">
+                    <img class="" src="" alt="">
+                    <div class="space_between">
+                        <p>HUE Light Control</p>
+                        <a href="/lumiere?selected=hue">Voir</a>
+                    </div>
+                </div>
+                <div class="lampe">
+                    <img class="" src="" alt="">
+                    <div class="space_between">
+                        <p>Projecteur piloté W</p>
+                        <a href="/lumiere?selected=projecteurw">Voir</a>
+                    </div>
+                </div>
+                <div class="lampe">
+                    <img class="" src="" alt="">
+                    <div class="space_between">
+                        <p>Projecteur piloté X</p>
+                        <a href="/lumiere?selected=projecteurx">Voir</a>
+                    </div>
+                </div>
+            </div>
+            <div>
+               <p class="info" id="date">...</p>
+               <p class="info">3 scénarios sur 12 sont actifs :</p> 
+               <ul>
+                    <li class="info-list">Noel</li>
+                    <li class="info-list">Nuit</li>
+                    <li class="info-list">Nouvelle heure</li>
+               </ul>
+               <script>
+
+                const month = ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "decembre"];
+
+                var date = new Date();
+                var dd = date.getDate()
+                if (dd.toString().length == 1) dd = "0" + dd
+                var mm = date.getMonth()
+                var yyyy = date.getFullYear();
+
+                document.getElementById("date").innerHTML = `Nous sommes le ${dd} ${month[mm]} ${yyyy}, il est ${date.getHours()}h${date.getMinutes()}.`
+
+                setInterval(() => {
+                    var date = new Date();;
+                    var dd = date.getDate();
+                    if (dd.toString().length == 1) dd = "0" + dd;
+                    var mm = date.getMonth();
+                    var yyyy = date.getFullYear();
+                    let h = date.getHours();
+                    if (h.toString().length == 1) h = "0" + h;
+                    let m = date.getMinutes();
+                    if (m.toString().length == 1) m = "0" + m;
+
+
+                    document.getElementById("date").innerHTML = `Nous sommes le ${dd} ${month[mm]} ${yyyy}, il est ${h}h${m}.`
+                }, 5000)
+
+               </script>
+            </div>
+        </section>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+        </div>
+
+    </section>
+</body>
+</html>

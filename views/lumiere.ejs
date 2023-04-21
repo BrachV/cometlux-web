@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Lumiere</title>
+</head>
+
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+
+    <!-- https://codepen.io/markcaron/pen/qXYJVm -->
+    <div class="container-multiswitch">
+
+        <fieldset class="multiswitch" data-theme="stoplight">
+            <legend>Lumières</legend>
+
+            <div class="slide-container">
+                <input type="radio" name="stoplight" id="hue" onclick="changeSelected('hue')" value="hue" checked>
+                <label for="hue">HUE</label>
+                <input type="radio" name="stoplight" id="projecteurw" onclick="changeSelected('projecteurw')" value="projecteurw">
+                <label for="projecteurw">Projecteur Wifi</label>
+                <input type="radio" name="stoplight" id="projecteurx" onclick="changeSelected('projecteurx')" value="projecteurx">
+                <label for="projecteurx">Projecteur Xbee</label>
+                <a class="slide" aria-hidden="true"></a>
+            </div>
+        </fieldset>
+    </div>
+
+    <section class="container-lumiere">
+
+        <div class="page" id="div-hue">
+            <!-- <select name="liste" onChange="combo(this, 'theinput')">
+
+            </select>  -->
+            <section>
+                <h3>Etat</h3>
+                <div class="button-row">   
+                    <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                    <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                </div>
+                <h3>Luminosité</h3>
+                <div class="button-column">   
+                    <input class="input-range-luminosite" type="range" name="volume" id="hue-range" min="0" max="255" value="<%= 129 %>">
+                    <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('hue-range').value)">Appliquer</button>
+                </div>
+            </section>
+
+            <section class=>
+                <h3>Couleur</h3>
+                <div class="button-row">
+                    <input type="color" id="colorpicker" value="#0000ff">
+                    <button class="button" onclick="envoiDonnee('couleur', document.getElementById('colorpicker').value)">Appliquer</button>    
+                </div>
+                
+            </section>
+        </div>
+        <div style="display: none;" class="page" id="div-projecteurw">
+
+            <section>
+                <h3>Etat</h3>
+                <div class="button-row">   
+                    <button class="button on"  onclick="envoiDonnee('allume', document.getElementById('projecteurw-range').value)">Allume</button>
+                    <button class="button off" onclick="envoiDonnee('eteindre', document.getElementById('projecteurw-range').value)">Eteindre</button>
+                </div>
+            </section>
+            <section>
+                <h3>Luminosité</h3>
+                <div class="button-column">
+                    <input type="range" name="volume" id="projecteurw-range" min="0" max="255" value="<%= 235 %>">
+                    <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('projecteurw-range').value)">Appliquer</button>
+                </div>
+            </section>
+        </div>
+        <div style="display: none;" class="page" id="div-projecteurx">
+            <section>
+                <h3>Etat</h3>
+                <div class="button-row">   
+                    <button class="button on" onclick="envoiDonnee('luminosite', document.getElementById('projecteurw-range').value)">Allume</button>
+                    <button class="button off"onclick="envoiDonnee('luminosite', document.getElementById('projecteurw-range').value)">Eteindre</button>
+                </div>
+            </section>
+            <section>
+                <h3>Luminosité</h3>
+                <div class="button-column">   
+                    <input type="range" name="volume" id="projecteurx-range" min="0" max="255" value="<%= data[0] %>">
+                    <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('projecteurx-range').value)">Appliquer</button>
+                </div>
+            </section>
+
+        </div>
+
+    </section>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+    </div>
+    <div id="2" class="secret-id" style="width: 0px; height: 0px; margin: 0px; padding: 0px; display: none;"></div>
+</body>
+<script>
+    function changeSelected(lampe) {
+        var hue = document.getElementById('div-hue')
+        var projecteurw = document.getElementById('div-projecteurw')
+        var projecteurx = document.getElementById('div-projecteurx')
+
+        switch (lampe) {
+            case 'hue':
+                hue.style.display = 'flex';
+                projecteurw.style.display = 'none';
+                projecteurx.style.display = 'none';
+                break;
+
+            case 'projecteurw':
+                hue.style.display = 'none';
+                projecteurw.style.display = 'flex';
+                projecteurx.style.display = 'none';
+                break;
+
+            case 'projecteurx':
+                hue.style.display = 'none';
+                projecteurw.style.display = 'none';
+                projecteurx.style.display = 'flex';
+                break;
+        }
+    }
+
+    // crée un channel à l'adresse localhost sur le port 443
+    const webSocket = new WebSocket('ws://192.168.0.101:443/');
+
+    // lorsque la page est ouverte indiquer que le websocket est créé
+    webSocket.addEventListener("open", () => {
+        console.log("Connecté au serveur");
+    });
+
+    // méthode pour envoyer un message au serveur via le client
+    function sendMessage(data) {
+        webSocket.send(data)
+    }
+
+    function envoiDonnee( _type, _valeur) {
+        // initialise l'objet qui va être transmis
+        let objet = {
+            id: document.getElementsByClassName("secret-id")[0].id,
+            type: _type,
+            valeur: _valeur
+        }
+
+        console.log(objet)
+
+        // transforme l'objet en une chaine de caractères
+        let obj = JSON.stringify(objet)
+        sendMessage(obj)
+    }
+</script>
+
+</html>
