@@ -24,145 +24,285 @@
 
     <!-- https://codepen.io/markcaron/pen/qXYJVm -->
     <div class="container-multiswitch">
-
         <fieldset class="multiswitch" data-theme="stoplight">
-            <legend>Lumières</legend>
-
             <div class="slide-container">
-                <input type="radio" name="stoplight" id="hue" onclick="changeSelected('hue')" value="hue" checked>
+                <input type="radio" name="stoplight" id="hue" onclick="changeSelected('hue')" value="hue" <% if(selected === "hue" || selected === undefined || (selected !== "hue" && selected !== "wifi" && selected !== "xbee" )){%> checked <% } %>>
                 <label for="hue">HUE</label>
-                <input type="radio" name="stoplight" id="projecteurw" onclick="changeSelected('projecteurw')" value="projecteurw">
-                <label for="projecteurw">Projecteur Wifi</label>
-                <input type="radio" name="stoplight" id="projecteurx" onclick="changeSelected('projecteurx')" value="projecteurx">
-                <label for="projecteurx">Projecteur Xbee</label>
+                <input type="radio" name="stoplight" id="wifi" onclick="changeSelected('wifi')" value="wifi" <% if(selected === "wifi"){%> checked <% } %>>
+                <label for="wifi">Projecteur Wifi</label>
+                <input type="radio" name="stoplight" id="xbee" onclick="changeSelected('xbee')" value="xbee" <% if(selected === "xbee"){%> checked <% } %>>
+                <label for="xbee">Projecteur Xbee</label>
                 <a class="slide" aria-hidden="true"></a>
             </div>
         </fieldset>
     </div>
 
     <section class="container-lumiere">
-
-        <div class="page" id="div-hue">
-            <!-- <select name="liste" onChange="combo(this, 'theinput')">
-
-            </select>  -->
-            <section>
-                <h3>Etat</h3>
-                <div class="button-row">   
-                    <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
-                    <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
-                </div>
-                <h3>Luminosité</h3>
-                <div class="button-column">   
-                    <input class="input-range-luminosite" type="range" name="volume" id="hue-range" min="0" max="255" value="<%= 129 %>">
-                    <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('hue-range').value)">Appliquer</button>
-                </div>
+        <!-- HUE -->
+        <div <% if(selected !== "hue" && selected !== undefined){%> style="display: none;" <% } %> class="page" id="div-hue">
+            <section class="center">
+				<select name="hue-select-projecteur" id="hue-select-tag" class="select-projecteur" onchange="combolistChanged('hue-select-tag', 'hue')">
+					<option disabled selected>Sélectionne un projecteur</option>
+					<option value="hue-tout">Tous les projecteurs</option>
+					<% for (let i = 0; i < data.length; i++) { %>
+						<% if(data[i]["type"] == "HUE"){%><option value="<%= data[i]['id'] %>" label="<%= data[i]['nom'] %>"></option><% } %>
+                    <%  } %>
+				</select>
             </section>
-
-            <section class=>
-                <h3>Couleur</h3>
-                <div class="button-row">
-                    <input type="color" id="colorpicker" value="#0000ff">
-                    <button class="button" onclick="envoiDonnee('couleur', document.getElementById('colorpicker').value)">Appliquer</button>    
+            <!-- TOUS LES PROJECTEURS HUE -->
+            <div class="panel" id="hue-tout" style="display: none;">
+                <div>
+                    <h3>Etat</h3>
+                    <div class="button-row">   
+                        <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                        <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                    </div>
+                    <h3>Luminosité</h3>
+                    <div class="button-row">
+                        <input class="input-range-luminosite" type="range" name="volume" id="hue-range" min="10" max="255" value="<%= 125 %>">
+                        <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('hue-range').value)">Appliquer</button>
+                    </div>
                 </div>
-                
-            </section>
-        </div>
-        <div style="display: none;" class="page" id="div-projecteurw">
-
-            <section>
-                <h3>Etat</h3>
-                <div class="button-row">   
-                    <button class="button on"  onclick="envoiDonnee('allume', document.getElementById('projecteurw-range').value)">Allume</button>
-                    <button class="button off" onclick="envoiDonnee('eteindre', document.getElementById('projecteurw-range').value)">Eteindre</button>
+                <div>
+                    <h3>Couleur</h3>
+                    <div class="button-row">
+                        <input type="color" id="colorpicker" value="#ffffff">
+                        <button class="button" onclick="envoiDonnee('couleur', document.getElementById('colorpicker').value)">Appliquer</button>    
+                    </div>
                 </div>
-            </section>
-            <section>
-                <h3>Luminosité</h3>
-                <div class="button-column">
-                    <input type="range" name="volume" id="projecteurw-range" min="0" max="255" value="<%= 235 %>">
-                    <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('projecteurw-range').value)">Appliquer</button>
-                </div>
-            </section>
-        </div>
-        <div style="display: none;" class="page" id="div-projecteurx">
-            <section>
-                <h3>Etat</h3>
-                <div class="button-row">   
-                    <button class="button on" onclick="envoiDonnee('luminosite', document.getElementById('projecteurw-range').value)">Allume</button>
-                    <button class="button off"onclick="envoiDonnee('luminosite', document.getElementById('projecteurw-range').value)">Eteindre</button>
-                </div>
-            </section>
-            <section>
-                <h3>Luminosité</h3>
-                <div class="button-column">   
-                    <input type="range" name="volume" id="projecteurx-range" min="0" max="255" value="<%= data[0] %>">
-                    <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('projecteurx-range').value)">Appliquer</button>
-                </div>
-            </section>
-
+            </div>
+            <% for (let i = 0; i < data.length; i++) { %>
+				<% if(data[i]["type"] == "HUE") {%>
+                    <div class="panel" id="hue-<%= data[i].id %>" style="display: none;">
+                        <div>
+                            <h3>Etat</h3>
+                            <div class="button-row">   
+                                <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                                <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                            </div>
+                            <h3>Luminosité</h3>
+                            <div class="button-row">
+                                <input class="input-range-luminosite" type="range" name="volume" id="hue-range-<%= data[i].id %>" min="10" max="255" value="<%= data[i].luminosite %>">
+                                <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('hue-range-<%= data[i].id %>').value)">Appliquer</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Couleur</h3>
+                            <div class="button-row">
+                                <input type="color" id="colorpicker-<%= data[i].id %>" value="#<%= data[i].couleur %>">
+                                <button class="button" onclick="envoiDonnee('couleur', document.getElementById('colorpicker-<%= data[i].id %>').value)">Appliquer</button>    
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <%  } %>
         </div>
 
+        <!-- PROJECTEUR WIFI -->
+        <div <% if(selected !== "wifi"){%> style="display: none;" <% } %> class="page" id="div-wifi">
+            <section class="center">
+				<select name="wifi-select-projecteur" id="wifi-select-tag" class="select-projecteur" onchange="combolistChanged('wifi-select-tag', 'wifi')">
+					<option disabled selected>Sélectionne un projecteur</option>
+					<option value="wifi-tout">Tous les projecteurs</option>
+					<% for (let i = 0; i < data.length; i++) { %>
+						<% if(data[i]["type"] == "WIFI"){%><option value="<%= data[i]['id'] %>" label="<%= data[i]['nom'] %>"></option><% } %>
+                    <%  } %>
+				</select>
+            </section>
+            <!-- TOUS LES PROJECTEURS WIFI -->
+            <div class="panel" id="wifi-tout" style="display: none;">
+                <div>
+                    <h3>Etat</h3>
+                    <div class="button-row">   
+                        <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                        <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                    </div>
+                </div>
+                <div>
+                    <h3>Luminosité</h3>
+                    <div class="button-row">
+                        <input class="input-range-luminosite" type="range" name="volume" id="wifi-range" min="10" max="255" value="<%= 125 %>">
+                        <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('wifi-range').value)">Appliquer</button>
+                    </div>
+                </div>
+
+            </div>
+            <% for (let i = 0; i < data.length; i++) { %>
+				<% if(data[i]["type"] == "WIFI") {%>
+                    <div class="panel" id="wifi-<%= data[i].id %>" style="display: none;">
+                        <div>
+                            <h3>Etat</h3>
+                            <div class="button-row">   
+                                <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                                <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Luminosité</h3>
+                            <div class="button-row">
+                                <input class="input-range-luminosite" type="range" name="volume" id="wifi-range-<%= data[i].id %>" min="10" max="255" value="<%= data[i].luminosite %>">
+                                <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('wifi-range-<%= data[i].id %>').value)">Appliquer</button>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <%  } %>
+        </div>
+        <!-- PROJECTEUR XBEE -->
+        <div <% if(selected !== "xbee"){%> style="display: none;" <% } %>  class="page" id="div-xbee">
+            <section class="center">
+				<select name="xbee-select-projecteur" id="xbee-select-tag" class="select-projecteur" onchange="combolistChanged('xbee-select-tag', 'xbee')">
+					<option disabled selected>Sélectionne un projecteur</option>
+					<option value="xbee-tout">Tous les projecteurs</option>
+					<% for (let i = 0; i < data.length; i++) { %>
+						<% if(data[i]["type"] == "XBEE"){%><option value="<%= data[i]['id'] %>" label="<%= data[i]['nom'] %>"></option><% } %>
+                    <%  } %>
+				</select>
+            </section>
+            <!-- TOUS LES PROJECTEURS XBEE -->
+            <div class="panel" id="xbee-tout" style="display: none;">
+                <div>
+                    <h3>Etat</h3>
+                    <div class="button-row">   
+                        <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                        <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                    </div>
+                </div>
+                <div>
+                    <h3>Luminosité</h3>
+                    <div class="button-row">
+                        <input class="input-range-luminosite" type="range" name="volume" id="xbee-range" min="10" max="255" value="<%= 125 %>">
+                        <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('xbee-range').value)">Appliquer</button>
+                    </div>
+                </div>
+
+            </div>
+            <% for (let i = 0; i < data.length; i++) { %>
+				<% if(data[i]["type"] == "XBEE") {%>
+                    <div class="panel" id="xbee-<%= data[i].id %>" style="display: none;" >
+                        <div>
+                            <h3>Etat</h3>
+                            <div class="button-row">   
+                                <button class="button on"  onclick="envoiDonnee('allume', null)">Allume</button>
+                                <button class="button off" onclick="envoiDonnee('eteindre', null)">Eteindre</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Luminosité</h3>
+                            <div class="button-row">
+                                <input class="input-range-luminosite" type="range" name="volume" id="xbee-range-<%= data[i].id %>" min="10" max="255" value="<%= data[i].luminosite %>">
+                                <button class="button modif" type="submit" onclick="envoiDonnee('luminosite', document.getElementById('xbee-range-<%= data[i].id %>').value)">Appliquer</button>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <%  } %>
+        </div>
     </section>
-    <div style="display: flex; justify-content: center; align-items: center;">
+
+    <!-- logo -->
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px;">
         <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
     </div>
-    <div id="2" class="secret-id" style="width: 0px; height: 0px; margin: 0px; padding: 0px; display: none;"></div>
+
+	<!-- prend temporairement une valeur -->
+    <div class="secret-id" style="width: 0px; height: 0px; margin: 0px; padding: 0px; display: none;"></div>
 </body>
 <script>
+
+	// crée un channel à l'adresse localhost sur le port 500
+	const webSocket = new WebSocket('ws://localhost:500/');
+
+	// lorsque la page est ouverte indiquer que le websocket est créé
+	webSocket.addEventListener("open", () => {
+		console.log("Connecté au serveur");
+	});
+
+	// méthode pour envoyer un message au serveur via le client
+	function sendMessage(data) {
+		webSocket.send(data)
+	}
+
+	function envoiDonnee( _type, _valeur) {
+		// initialise l'objet qui va être transmis
+		let selectedProjecteur = document.getElementsByClassName("secret-id")[0].id;
+		if (!selectedProjecteur) return alert("Merci de d'abord sélectionner un projecteur.");
+
+		let objet = {
+			id: selectedProjecteur,
+			type: _type,
+			valeur: _valeur
+		}
+
+		// transforme l'objet en une chaine de caractères
+		let obj = JSON.stringify(objet)
+		sendMessage(obj)
+	}
+
+    // id prend en valeur l'identifiant d'une balise <select>, de prend en valeur la source (hue, projecteurw, projecteurx)
+	function combolistChanged(identifiant, de) {
+		let combolist = document.getElementById(identifiant);
+		let valeur = combolist.value;
+		let secretDiv = document.querySelector('.secret-id');
+
+		secretDiv.setAttribute('id', valeur)    
+        switch(de) {
+            case 'hue': 
+                let tousLesDivHue = document.getElementById('div-hue').children
+                for (let i = 1; i < tousLesDivHue.length; i++)
+                {
+                    let item = document.getElementById(tousLesDivHue[i].id)
+                    console.log(item.id, valeur)
+                    if (item.id.includes(valeur)) item.style.display = 'flex'
+                    else item.style.display = 'none'
+                }
+                break;
+            case 'wifi':
+                let tousLesDivWifi = document.getElementById('div-wifi').children
+                for (let i = 1; i < tousLesDivWifi.length; i++)
+                {
+                    let item = document.getElementById(tousLesDivWifi[i].id)
+                    console.log(item.id, valeur)
+                    if (item.id.includes(valeur)) item.style.display = 'flex'
+                    else item.style.display = 'none'
+                }
+                break;
+
+            case 'xbee':
+                let tousLesDivXbee = document.getElementById('div-xbee').children
+                for (let i = 1; i < tousLesDivXbee.length; i++)
+                {
+                    let item = document.getElementById(tousLesDivXbee[i].id)
+                    console.log(item.id, valeur)
+                    if (item.id.includes(valeur)) item.style.display = 'flex'
+                    else item.style.display = 'none'
+                }
+                break;
+        }
+	}
+
     function changeSelected(lampe) {
-        var hue = document.getElementById('div-hue')
-        var projecteurw = document.getElementById('div-projecteurw')
-        var projecteurx = document.getElementById('div-projecteurx')
+        let hueDiv = document.getElementById('div-hue')
+        let wifiDiv = document.getElementById('div-wifi')
+        let xbeeDiv = document.getElementById('div-xbee')
 
         switch (lampe) {
             case 'hue':
-                hue.style.display = 'flex';
-                projecteurw.style.display = 'none';
-                projecteurx.style.display = 'none';
+                hueDiv.style.display = 'flex';
+                wifiDiv.style.display = 'none';
+                xbeeDiv.style.display = 'none';
                 break;
-
-            case 'projecteurw':
-                hue.style.display = 'none';
-                projecteurw.style.display = 'flex';
-                projecteurx.style.display = 'none';
+            case 'wifi':
+                hueDiv.style.display = 'none';
+                wifiDiv.style.display = 'flex';
+                xbeeDiv.style.display = 'none';
                 break;
-
-            case 'projecteurx':
-                hue.style.display = 'none';
-                projecteurw.style.display = 'none';
-                projecteurx.style.display = 'flex';
+            case 'xbee':
+                hueDiv.style.display = 'none';
+                wifiDiv.style.display = 'none';
+                xbeeDiv.style.display = 'flex';
                 break;
         }
-    }
-
-    // crée un channel à l'adresse localhost sur le port 443
-    const webSocket = new WebSocket('ws://192.168.0.101:443/');
-
-    // lorsque la page est ouverte indiquer que le websocket est créé
-    webSocket.addEventListener("open", () => {
-        console.log("Connecté au serveur");
-    });
-
-    // méthode pour envoyer un message au serveur via le client
-    function sendMessage(data) {
-        webSocket.send(data)
-    }
-
-    function envoiDonnee( _type, _valeur) {
-        // initialise l'objet qui va être transmis
-        let objet = {
-            id: document.getElementsByClassName("secret-id")[0].id,
-            type: _type,
-            valeur: _valeur
-        }
-
-        console.log(objet)
-
-        // transforme l'objet en une chaine de caractères
-        let obj = JSON.stringify(objet)
-        sendMessage(obj)
     }
 </script>
-
 </html>

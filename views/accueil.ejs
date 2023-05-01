@@ -20,7 +20,6 @@
         </ul>
     </header>
     <section style="padding-top: 40px;">
-        <h2 class="title">Bienvenue</h2>
         <section class="container">
             <div class="items">
                 <div class="lampe">
@@ -34,24 +33,24 @@
                     <img class="" src="" alt="">
                     <div class="space_between">
                         <p>Projecteur piloté W</p>
-                        <a href="/lumiere?selected=projecteurw">Voir</a>
+                        <a href="/lumiere?selected=wifi">Voir</a>
                     </div>
                 </div>
                 <div class="lampe">
                     <img class="" src="" alt="">
                     <div class="space_between">
                         <p>Projecteur piloté X</p>
-                        <a href="/lumiere?selected=projecteurx">Voir</a>
+                        <a href="/lumiere?selected=xbee">Voir</a>
                     </div>
                 </div>
             </div>
             <div>
                <p class="info" id="date">...</p>
-               <p class="info">3 scénarios sur 12 sont actifs :</p> 
+               <p class="info"> <%= data[0].nb_scenario_actifs %> scénario(s) sur <%= data.length %> est actif :</p> 
                <ul>
-                    <li class="info-list">Noel</li>
-                    <li class="info-list">Nuit</li>
-                    <li class="info-list">Nouvelle heure</li>
+                    <% for (let i = 0; i < data.length; i++) { %>
+				        <% if(data[i]["etat"] == "1") {%><li class="info-list actif"><%= data[i].nom %></li><% } %>
+                    <% } %>
                </ul>
                <script>
 
@@ -66,7 +65,7 @@
                 document.getElementById("date").innerHTML = `Nous sommes le ${dd} ${month[mm]} ${yyyy}, il est ${date.getHours()}h${date.getMinutes()}.`
 
                 setInterval(() => {
-                    var date = new Date();;
+                    var date = new Date();
                     var dd = date.getDate();
                     if (dd.toString().length == 1) dd = "0" + dd;
                     var mm = date.getMonth();

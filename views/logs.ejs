@@ -21,37 +21,31 @@
         </ul>
     </header>
     <section>
-        <h2 class="title">Logs</h2>
+        <!-- <h2 class="title">Archive</h2> -->
         <div class="container">
             <table>
-                <caption>Récapitulatif des groupes punk les plus célèbres du Royaume-Uni</caption>
+                <caption>Archive des 10 dernières logs</caption>
                 <thead>
                   <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Relative</th>
                     <th scope="col">Source</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Lampe affectée</th>
                     <th scope="col">Description</th>
                     <th scope="col">ID</th>
                   </tr>
                 </thead>
                 <tbody style="color: #fff;"> 
                     <% for (let i = 0; i < data.length; i++) { %>
-                        <tr>
-                            <td><%= data[i].timestamp %></td>
-                            <td>relative</td>
+                        <tr class="<%= i % 2 === 1 ? "pair" : "nonpair" %>">
                             <td><%= data[i].source %></td>
+                            <td><%= clearDate(data[i].timestamp) %>, il y a <%= humanizeDuration(new Date() - data[i].timestamp, {language: 'fr', largest: 3, round: true, conjunction: " et " }) %> </td>
+                            <td><%= data[i].nom %>  (<%= data[i].type %>)</td>
                             <td><%= data[i].description %></td>
                             <td><%= data[i].id %></td>
                         </tr>
                     <%  } %>
 
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <th scope="row" colspan="2">Nombre total de logs</th>
-                    <td colspan="2">120</td>
-                  </tr>
-                </tfoot>
               </table>
         </div>
     </section>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Scenario (VOIR)</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section style="padding-top: 40px;">
+        <div class="container">
+            <table>
+                <caption>Déroulement du scénario</caption>
+                <thead>
+                    <tr>
+                    <th scope="col">Etape n°</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Lampe</th>
+                    <th scope="col">Allume</th>
+                    <th scope="col">Luminosite</th>
+                    <th scope="col">Couleur</th>
+                    <th scope="col">Delais (s)</th>
+                    </tr>
+                </thead>
+                <tbody style="color: #fff;"> 
+                    <% for (let i = 0; i < data.length; i++) { %>
+                        <tr class="<%= i % 2 === 1 ? "pair" : "nonpair" %>">
+                            <td><%= data[i].num_etape %></td>
+                            <td><%= data[i].nom_etape || "inconnu" %></td>
+                            <td><%= data[i].projecteur %> (<%= data[i].type %>)</td>
+                            <td><%= data[i].allume === 1 ? "Oui" : "Non" %></td>
+                            <td><%= data[i].luminosite %></td>
+                            <td><%= data[i].couleur %></td>
+                            <td><%= data[i].delais %></td>
+                        </tr>
+                    <%  } %>
+                </tbody>
+            </table>
+        </div>
+        </section>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+        </div>
+
+    </section>
+</body>
+</html>

@@ -5,3 +5,4 @@ Permet de piloter les différents projecteurs.
 - Pouvoir contrôler les deux projecteurs pour chaque éclairage.
 - Visualiser un scénario.
 - Régler le header (responsive)
+- Fichier de configuration JSON
