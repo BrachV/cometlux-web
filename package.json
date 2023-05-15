@@ -7,14 +7,16 @@
     "nodemon": "^2.0.21",
     "ws": "^8.13.0"
   },
-  "name": "cometluxweb",
+  "name": "cometlux-web",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js -e ejs,js,html,css"
   },
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "author": "BrachV",
+  "license": "UNLICENSED",
+  "description": "Solution Web du projet CometLux",
+  "private": true,
+  "repository": "https://github.com/BrachV/cometlux-web.git"
 }
