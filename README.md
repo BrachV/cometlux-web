@@ -10,9 +10,10 @@ Le site web est une des solutions que propose le projet (fictif) Cometlux, celui
 - API interdite, hors programme
 
 # AUTRES SOLUTIONS DU PROJET
-- Application C# personnel (Windows Form .NET) : 
-- Application C# commune (Windows Form .NET) : 
--  (Windows Form .NET) : 
+- Site Web (Node.js) : https://github.com/BrachV/cometlux-web
+- Application C# commune (Windows Form .NET) : https://github.com/BrachV/cometlux-light-control-commun
+- Application C# WIFI (Windows Form .NET) : https://github.com/BrachV/cometlux-light-control-wifi
+- Code carte ESP32 (Arduino) : https://github.com/BrachV/cometlux-esp32
 
 # FUTUR AMELIORATIONS
 - Header responsive
