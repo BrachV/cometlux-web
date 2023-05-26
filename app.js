@@ -60,6 +60,14 @@ app.get('/scenario', async(req, res) => {
     });
 });
 
+// si l'utilisateur veut créer un scénario
+app.get('/scenario/creer', async(req, res) => {
+
+    let data = await db.query("SELECT * FROM lampe")
+    if (data === "ERREUR") return res.redirect('/erreur')
+    res.render('scenario-creer');
+});
+
 // si l'utilisateur regarde plus en détail un scénario
 app.get(['/scenario/view', '/scenario/view:id'], async(req, res) => {
     let id = req.query["id"];

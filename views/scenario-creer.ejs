@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Scenario (VOIR)</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section>
+        <section style="display: flex; flex-direction: column;">
+            <p class="title">Scénarios disponibles</p>
+            <div class="scenario_infos">            
+                <input class="button_scenario" type="text" id="scenario_nom" placeholder="Nom du scénario">
+                <input class="button_scenario" type="text" id="scenario_description" placeholder="Description du scénario">
+            </div>
+        </section>
+        
+    <section style="padding-top: 40px;">
+        <div class="container">
+            <table>
+                <caption>Etapes</caption>
+                <thead>
+                    <tr>
+                    <th scope="col">Etape n°</th>
+                    <th scope="col">Projecteur concerné</th>
+                    <th scope="col">Lampe</th>
+                    <th scope="col">Allume</th>
+                    <th scope="col">Luminosite</th>
+                    <th scope="col">Couleur</th>
+                    <th scope="col">Delais (s)</th>
+                    </tr>
+                </thead>
+                <tbody style="color: #fff;"> 
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+        </div>
+
+</body>
+</html>

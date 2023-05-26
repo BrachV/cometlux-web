@@ -23,6 +23,8 @@
         <p class="title">Scénarios disponibles</p>
         <div class="recherche_div">            
             <input type=search results=5 id="recherche" onkeyup="myFunction()" placeholder="Nom du scénario..">
+            <a target="_blank" href="/scenario/creer" class="button-scenario">Ajouter un scénario</a>
+            <a target="_blank" href="/scenario/planification" class="button-scenario">Planifier un scénario</a>
         </div>
         <div class="container container-scenario" id="scenario_list">
             <% for(var i=0; i<data.length; i++) {%>
