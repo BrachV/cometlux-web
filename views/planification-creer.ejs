@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Scenario (VOIR)</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section>
+        <section style="display: flex; flex-direction: column;">
+            <div class="scenario_infos">            
+                <input class="button_scenario" type="text" id="scenario_nom" placeholder="Nom de la planification">
+            </div>
+            <div class="config_planification">
+                <div>
+                    <label for="time">Choisir l'heure d'exécution</label>
+                    <input id="time" type="time" name="time" />
+                </div>
+                <div>
+                    <label for="nb_repetitions">Nombre de répétitions</label>
+                    <input id="nb_repetitions" type="number" name="nb_repetitions" />
+                </div>
+                <div>
+                    <label for="lundi">Lundi</label>
+                </div>
+            </div>
+            <div class="semaine_planfication"></div>
+        </section>
+
+</body>
+</html>

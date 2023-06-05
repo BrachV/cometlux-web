@@ -79,6 +79,13 @@ app.get(['/scenario/view', '/scenario/view:id'], async(req, res) => {
     });
 });
 
+// si l'utilisateur veut créer un scénario
+app.get('/planification/creer', async(req, res) => {
+    let data = await db.query("SELECT * FROM scenario")
+    if (data === "ERREUR") return res.redirect('/erreur')
+    res.render('planification-creer');
+});
+
 // si l'utilisateur consulte la branche logs de l'url
 app.get('/logs', async(req, res) => {
     let data = await db.query("SELECT logs.id, lampe.nom, lampe.type, logs.description, logs.source, logs.timestamp FROM logs JOIN lampe ON logs.lampe_id = lampe.id ORDER BY logs.id DESC LIMIT 10;")
