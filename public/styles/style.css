@@ -176,7 +176,47 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 50px;
 }
+
+.config_planification {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 50px;
+}
+.config_planification label {
+  font-size: 28px;
+  color: white;
+}
+.config_planification input {
+  padding: 5px;
+  font-size: 28px;
+  border-radius: 10px;
+}
+.semaine_planification {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 50px 200px;
+}
+.semaine_planification div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.semaine_planification div label {
+  font-size: 28px;
+  color: white;
+}
+.semaine_planification div input {
+  width: 20px;
+  height: 20px;
+  color: white;
+  margin: 5px;
+}
+
 
 #scenario_description {
   width: 800px;

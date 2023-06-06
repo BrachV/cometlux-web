@@ -31,13 +31,43 @@
                 </div>
                 <div>
                     <label for="nb_repetitions">Nombre de répétitions</label>
-                    <input id="nb_repetitions" type="number" name="nb_repetitions" />
-                </div>
-                <div>
-                    <label for="lundi">Lundi</label>
+                    <input id="nb_repetitions" type="number" name="nb_repetitions" value="1" min="1" max="20" />
                 </div>
             </div>
-            <div class="semaine_planfication"></div>
+            <div class="semaine_planification">
+                <div>
+                    <label for="1">Lundi</label>
+                    <input type="checkbox" name="lundi" id="1" />
+                </div>
+                <div>
+                    <label for="2">Mardi</label>
+                    <input type="checkbox" name="mardi" id="2" />
+                </div>
+                <div>
+                    <label for="3">Mercredi</label>
+                    <input type="checkbox" name="mercredi" id="3" />
+                </div>
+                <div>
+                    <label for="4">Jeudi</label>
+                    <input type="checkbox" name="jeudi" id="4" />
+                </div>
+                <div>
+                    <label for="5">Vendredi</label>
+                    <input type="checkbox" name="vendredi" id="5" />
+                </div>
+                <div>
+                    <label for="6">Samedi</label>
+                    <input type="checkbox" name="samedi" id="6" />
+                </div>
+                <div>
+                    <label for="7">Dimanche</label>
+                    <input type="checkbox" name="dimanche" id="7" />
+                </div>
+            </div>
+            <div class="bouton_planification">
+                <a href="/scenario">Annuler</a>
+                <button type="button">Créer la planification</button>
+            </div>
         </section>
 
 </body>
