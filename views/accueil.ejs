@@ -46,7 +46,7 @@
             </div>
             <div>
                <p class="info" id="date">...</p>
-               <p class="info"> <%= data[0].nb_scenario_actifs %> scénario(s) sur <%= data.length %> est actif :</p> 
+               <p class="info"> <%= data[0].nb_scenario_actifs %> planification(s) sur <%= data.length %> est actif</p> 
                <ul>
                     <% for (let i = 0; i < data.length; i++) { %>
 				        <% if(data[i]["etat"] == "1") {%><li class="info-list actif"><%= data[i].nom %></li><% } %>

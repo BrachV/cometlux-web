@@ -1,10 +1,10 @@
 {
-    "hostname": "192.168.0.50",
+    "hostname": "192.168.0.100",
     "port": "3000",
     "mysql": {
-        "host": "192.168.0.50",
+        "host": "192.168.0.20",
         "database": "cometlux",
-        "user": "temp",
-        "password": "temp"
+        "user": "Admin",
+        "password": "cocorico%*"
     }
 }

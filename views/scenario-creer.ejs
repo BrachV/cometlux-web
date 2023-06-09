@@ -73,7 +73,7 @@
         </div>
 
         <script>
-            const webSocket = new WebSocket('ws://192.168.0.50:500/');
+            const webSocket = new WebSocket('ws://192.168.0.20:500/');
             webSocket.addEventListener("open", () => {
                 console.log("Connecté au serveur");
             });
@@ -144,10 +144,10 @@
 
             function creerScenario() {
                 let nom = document.getElementById("scenario_nom").value
-                // if (!nom) return alert("Merci de donner un nom au scénario.");
+                if (!nom) return alert("Merci de donner un nom au scénario.");
 
                 let description = document.getElementById("scenario_description").value
-                // if (!description) return alert("Merci de donner une description au scénario.");
+                if (!description) return alert("Merci de donner une description au scénario.");
 
                 let etapes = [{
                     nom: nom, 
@@ -162,7 +162,7 @@
                     let numeroEtape = valeurs[i].cells[0].innerText;
 
                     let projecteurId = valeurs[i].cells[1].querySelector('select').value;
-                    // if (projecteurId == 0) return alert(`Merci de choisir un projecteur pour l'étape n°${numeroEtape}.`)
+                    if (projecteurId == 0) return alert(`Merci de choisir un projecteur pour l'étape n°${numeroEtape}.`)
 
                     let allume = valeurs[i].cells[2].querySelector('input').checked;
                     let luminosite = valeurs[i].cells[3].querySelector('input').value;

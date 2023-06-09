@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/style.css">
-    <title>CometLux - Planification (CREER)</title>
+    <title>CometLux - Scenario (VOIR)</title>
 </head>
 <body>
     <header class="header">
@@ -22,59 +22,67 @@
     <section>
         <section style="display: flex; flex-direction: column;">
             <div class="scenario_infos">            
-                <input class="button_scenario" type="text" id="planification_nom" placeholder="Nom de la planification">
-                <select id="scenario_id" name="scenario_id" class="creer-select-scenario">
-                    <option disabled selected value="0">Sélectionne un scénario</option>
-                    <% for (let i = 0; i < data.length; i++) { %><option value="<%= data[i]['id'] %>" label="<%= data[i]['nom'] %>"></option><% } %>
+                <input class="button_scenario" type="text" id="planification_nom" placeholder="Nom de la planification" value="<%= data[0].nom %>">
+                <select id="scenario_id" class="creer-select-projecteur">
+                    <option disabled selected value="0">Sélectionne un projecteur</option>
+                    <% for (let j = 0; j < scenario.length; j++) { %>
+                        <option value="<%= scenario[j]['id'] %>" label="<%= scenario[j]['nom'] %>"
+                            <% for (let k = 0; k < data.length; k++) { %>
+                                <% if (data[k].id_scenario == scenario[j].id) { %> selected <% } %>>
+                            <% } %>
+                        </option>
+                    <% } %>
                 </select>
             </div>
             <div class="config_planification">
                 <div>
                     <label for="time">Choisir l'heure d'exécution</label>
-                    <input id="time" type="time" name="time" />
+                    <input id="time" type="time" name="time" value="<%= data[0].heure < 10 ? '0' + data[0].heure : data[0].heure %>:<%= data[0].minute < 10 ? '0' + data[0].minute : data[0].minute %>" />
                 </div>
                 <div>
                     <label for="nb_repetitions">Nombre de répétitions</label>
-                    <input id="nb_repetitions" type="number" name="nb_repetitions" value="1" min="1" max="20" />
+                    <input id="nb_repetitions" type="number" name="nb_repetitions" value="<%= data[0].repetition %>" min="1" />
                 </div>
-                <div>
+                <div style="display: flex; align-items: center;">
                     <label for="actif">Planification activé ?</label>
-                    <input id="actif" type="checkbox" name="actif" />
+                    <input id="actif" type="checkbox" name="actif" <%= data[0].etat == "1" ? 'checked' : '' %> />
                 </div>
             </div>
             <div class="semaine_planification">
                 <div>
                     <label for="1">Lundi</label>
-                    <input type="checkbox" name="lundi" id="1" />
+                    <input type="checkbox" name="lundi" id="1" <%= data[0].jours.includes('1') ? 'checked' : '' %>  />
                 </div>
                 <div>
                     <label for="2">Mardi</label>
-                    <input type="checkbox" name="mardi" id="2" />
+                    <input type="checkbox" name="mardi" id="2" <%= data[0].jours.includes('2') ? 'checked' : '' %>/>
                 </div>
                 <div>
                     <label for="3">Mercredi</label>
-                    <input type="checkbox" name="mercredi" id="3" />
+                    <input type="checkbox" name="mercredi" id="3" <%= data[0].jours.includes('3') ? 'checked' : '' %>/>
                 </div>
                 <div>
                     <label for="4">Jeudi</label>
-                    <input type="checkbox" name="jeudi" id="4" />
+                    <input type="checkbox" name="jeudi" id="4" <%= data[0].jours.includes('4') ? 'checked' : '' %>/>
                 </div>
                 <div>
                     <label for="5">Vendredi</label>
-                    <input type="checkbox" name="vendredi" id="5" />
+                    <input type="checkbox" name="vendredi" id="5" <%= data[0].jours.includes('5') ? 'checked' : '' %>/>
                 </div>
                 <div>
                     <label for="6">Samedi</label>
-                    <input type="checkbox" name="samedi" id="6" />
+                    <input type="checkbox" name="samedi" id="6" <%= data[0].jours.includes('6') ? 'checked' : '' %>/>
                 </div>
                 <div>
                     <label for="7">Dimanche</label>
-                    <input type="checkbox" name="dimanche" id="7" />
+                    <input type="checkbox" name="dimanche" id="7" <%= data[0].jours.includes('7') ? 'checked' : '' %>/>
                 </div>
             </div>
             <div class="bouton_planification">
-                <a href="/planification" class="button_scenario_annuler">Annuler</a>
-                <button class="button_scenario_creer" type="button" onclick="creerPlanification()">Créer la planification</button>
+                <a href="/scenario" class="button_scenario_annuler">Annuler</a>
+                <button type="button" onclick="modifPlanification()" class="button_scenario_creer" style="font-size: 20px; background-color: antiquewhite; color: #000;">Modifier la planification</button>
+                <button type="button" onclick="supprimerPlanification()" class="button_scenario_del" style="font-size: 20px;">Supprimer la planification</button>
+
             </div>
         </section>
         <script>
@@ -83,7 +91,15 @@
                 console.log("Connecté au serveur");
             });
 
-            function creerPlanification() {
+            let queryString = window.location.search;
+
+            // Créer un objet URLSearchParams à partir de la query string
+            let params = new URLSearchParams(queryString);
+
+            // Récupérer la valeur du paramètre "id"
+            let id = params.get("id");
+
+            function modifPlanification() {
                 let nom = document.getElementById("planification_nom").value
                 if (!nom) return alert("Merci de donner un nom à la planification.");
 
@@ -101,14 +117,20 @@
                 let jours = `${document.getElementById("1").checked ? "1" : ""}${document.getElementById("2").checked ? "2" : ""}${document.getElementById("3").checked ? "3" : ""}${document.getElementById("4").checked ? "4" : ""}${document.getElementById("5").checked ? "5" : ""}${document.getElementById("6").checked ? "6" : ""}${document.getElementById("7").checked ? "7" : ""}`;
                 if (!jours.length) return alert("Merci de sélectionner au moins un jour.")
 
-                console.log()
-                webSocket.send(JSON.stringify({nom, heure, minute, jours, repetition, etat, scenarioId, origine: "planif-creer"}))
-                alert("Planification créé avec succès !")
+                webSocket.send(JSON.stringify({id, nom, heure, minute, jours, repetition, etat, scenarioId, origine: "planif-modif"}))
+                alert("Planification modifié avec succès !")
+                window.location.href = '/planification'
+            }
+            function supprimerPlanification()
+            {
+
+                webSocket.send(JSON.stringify({id: id, origine: "planif-supprimer"}))
+                alert("Planification supprimé avec succès !")
+
                 window.location.href = '/planification'
 
             }
 
-            
         </script>
 
 </body>

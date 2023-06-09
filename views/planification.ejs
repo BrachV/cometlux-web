@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Scenario</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section>
+        <p class="title">Planifications disponibles</p>
+        <div class="recherche_div">            
+            <input type=search results=5 id="recherche" onkeyup="myFunction()" placeholder="Nom de la planif..">
+            <a href="/planification/creer" class="button-scenario">Ajouter une planification</a>
+        </div>
+        <div class="container container-scenario" id="scenario_list">
+            <% for(var i=0; i<data.length; i++) {%>
+                <section class="scenarioPlanif">
+                    <h1><%= i+1 %></h3>
+                    <div>
+                        <h3><%= data[i]['nom'] %></h3>                        
+                        <div style="display: flex;">
+                            <p class="status" id="<%= data[i]['etat'] %>"><%= data[i]['etat'] == "0" ? 'Inactif' : 'Actif' %></p>
+                            <a class="see_scenario" href="/planification/modif?id=<%= data[i]["id"] %>" >Modifier</a>
+                        </div>
+                        
+
+                    </div>
+                </section>
+             <% } %>
+        </div>
+        
+    </section>
+    <script>
+        function myFunction() {
+          // Declare variables
+          var input, filter, item, li, h3, i, txtValue;
+          input = document.getElementById('recherche');
+          filter = input.value.toUpperCase();
+          item = document.getElementById("scenario_list");
+          section = item.getElementsByTagName('section');
+        
+          // Loop through all section items, and hide those who don't match the search query
+          for (i = 0; i < section.length; i++) {
+            console.log(section)
+            h3 = section[i].getElementsByTagName("h3")[0];
+            txtValue = h3.textContent || h3.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              section[i].style.display = "";
+            } else {
+              section[i].style.display = "none";
+            }
+          }
+        }
+    </script>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+    </div>
+</body>
+
+</html>

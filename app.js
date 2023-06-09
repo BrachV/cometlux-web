@@ -95,12 +95,40 @@ app.get(['/scenario/modif', '/scenario/modif:id'], async(req, res) => {
     });
 });
 
+
+
+// si l'utilisateur veut créer un scénario
+app.get('/planification', async(req, res) => {
+    let data = await db.query("SELECT * FROM planification")
+    if (data === "ERREUR") return res.redirect('/erreur')
+    res.render('planification', {
+        data: data, // transmet le résultat de la requête SQL
+    });
+});
 // si l'utilisateur veut créer un scénario
 app.get('/planification/creer', async(req, res) => {
     let data = await db.query("SELECT * FROM scenario")
     if (data === "ERREUR") return res.redirect('/erreur')
-    res.render('planification-creer');
+    res.render('planification-creer', {
+        data: data
+    });
 });
+// si l'utilisateur modif un scénario
+app.get(['/planification/modif', '/planification/modif:id'], async(req, res) => {
+    let id = req.query["id"];
+    let data = await db.query(`SELECT * FROM planification WHERE id='${id}';`)
+    if (data === "ERREUR") return res.redirect('/erreur')
+    let scenario = await db.query(`SELECT * FROM scenario;`)
+    if (scenario === "ERREUR") return res.redirect('/erreur')
+
+    res.render('planification-modif', {
+        data: data, // transmet le résultat de la requête SQL
+        scenario: scenario
+    });
+});
+
+
+
 
 // si l'utilisateur consulte la branche logs de l'url
 app.get('/logs', async(req, res) => {
@@ -141,13 +169,41 @@ sockserver.on('connection', ws => {
         let objet = JSON.parse(data)
         console.log(objet)
 
+        // création d'une planification
+        if (objet?.origine === "planif-creer")
+        {
+            console.log("PLANIFICATION", objet)
+            // crée la planification dans la table planification
+            await db.query(`INSERT INTO planification (id_scenario, nom, heure, minute, jours, repetition, etat) VALUES ('${objet.scenarioId}', '${objet.nom}', '${objet.heure}', '${objet.minute}', '${objet.jours}', '${objet.repetition}', '${objet.etat}');`)
+            return;
+        }
+        // modification d'une planification
+        if (objet?.origine === "planif-modif")
+        {
+            console.log("PLANIFICATION", objet)
+            // crée la planification dans la table planification
+            await db.query(`UPDATE planification SET id_scenario='${objet.scenarioId}', nom='${objet.nom}', heure='${objet.heure}', minute='${objet.minute}', jours='${objet.jours}', repetition='${objet.repetition}', etat='${objet.etat}' WHERE id='${objet.id}'`)
+            return;
+        }
+        // supprimer une planification
+        if (objet?.origine === "planif-supprimer")
+        {
+            console.log("PLANIFICATION", objet)
+            // crée la planification dans la table planification
+            await db.query(`DELETE FROM planification WHERE id='${objet.id}'`)
+            return;
+        }
+
+
+
+
         // modifier un scénario
-        if (objet?.scenarioId != undefined || objet[0]?.origine === "modif" || objet.origine === "modif")
+        if (objet[0]?.origine === "modif" || objet.origine === "modif")
         {
             let scenarioId = objet[0].scenarioId;
             await db.query(`UPDATE scenario SET nom='${objet[0].nom}', description='${objet[0].description}' WHERE id='${scenarioId}'`)
             objet.shift();
-            for (let i = 0; i < objet.length; i++) await db.query(`UPDATE etapes SET allume='${objet[i].allume ? "1":"0"}', luminosite='${objet[i].luminosite}', lampe_id='${objet[i].projecteurId}', couleur='${objet[i].couleur}', delais='${objet[i].delais}' WHERE id_scenarios='${scenarioId}' AND num_etape='${objet[i].numeroEtape}'`)
+            for (let i = 0; i < objet.length; i++) await db.query(`UPDATE etapes SET allume='${objet[i].allume ? "1":"0"}', luminosite='${objet[i].luminosite}', lampe_id='${objet[i].projecteurId}', couleur='${objet[i].couleur.toUpperCase().substring(1)}', delais='${objet[i].delais}' WHERE id_scenarios='${scenarioId}' AND num_etape='${objet[i].numeroEtape}'`)
             
             return;
         }
@@ -161,7 +217,7 @@ sockserver.on('connection', ws => {
         }
 
         // création d'un scénario
-        if (objet[0].description != undefined && objet?.origine === "creer")
+        if (objet[0]?.origine === "créer")
         {
             console.log("SCENARIO", objet[0])
             // crée le scénario dans la table scénario
@@ -171,7 +227,7 @@ sockserver.on('connection', ws => {
             objet.shift(); // enlève le premier élément (nom et description du scénario) du tableau des données
             let etapesListQuery = "";
             for (let i = 0; i < objet.length; i++) 
-            etapesListQuery+= ` ('${objet[i].numeroEtape}', '${scenario.insertId}', '${objet[i].allume ? "1":"0"}', '${objet[i].luminosite}', '${objet[i].projecteurId}', '${objet[i].couleur}', '${objet[i].delais}')${i != objet.length-1  ? ",":";"} `
+            etapesListQuery+= ` ('${objet[i].numeroEtape}', '${scenario.insertId}', '${objet[i].allume ? "1":"0"}', '${objet[i].luminosite}', '${objet[i].projecteurId}', '${objet[i].couleur.toUpperCase().substring(1)}', '${objet[i].delais}')${i != objet.length-1  ? ",":";"} `
 
             await db.query(`INSERT INTO etapes (num_etape, id_scenarios, allume, luminosite, lampe_id, couleur, delais) VALUES ${etapesListQuery}`)
             return;

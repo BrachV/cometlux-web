@@ -23,8 +23,8 @@
         <p class="title">Scénarios disponibles</p>
         <div class="recherche_div">            
             <input type=search results=5 id="recherche" onkeyup="myFunction()" placeholder="Nom du scénario..">
-            <a href="/scenario/creer" class="button-scenario">Ajouter un scénario</a>
-            <a href="/planification/creer" class="button-scenario">Planifier un scénario</a>
+            <a href="/scenario/creer" class="button_scenario">Ajouter un scénario</a>
+            <a href="/planification" class="button_scenario">Gerez les planifications</a>
         </div>
         <div class="container container-scenario" id="scenario_list">
             <% for(var i=0; i<data.length; i++) {%>
@@ -35,7 +35,7 @@
                         <p><%= data[i]['description'] %></p>
                         
                         <div style="display: flex;">
-                            <!-- <p class="status"><%= data[i]['etat'] === '0' ? 'Inactif' : 'Actif' %></p> -->
+                            <a style="color: #000; text-decoration: none;" class="status" href="/scenario/modif?id=<%= data[i]["id"] %>">Modifier</a>
                             <a class="see_scenario" href="/scenario/view?id=<%= data[i]["id"] %>" >Voir</a>
                         </div>
                         

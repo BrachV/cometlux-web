@@ -64,7 +64,7 @@
                             </td>
                             <td><input type="checkbox" class="creer-allume-projecteur" <%= data[i].allume === 1 ? 'checked' : '' %> ></td>
                             <td><input class="short-input-range-luminosite" type="range" name="volume"min="10" max="255" value="<%= data[i].luminosite %>"></td>
-                            <td><input class="short-color" name="couleur" type="color" id="creer-colorpicker"  value="<%= data[i].couleur %>"></td>
+                            <td><input class="short-color" name="couleur" type="color" id="creer-colorpicker"  value="#<%= data[i].couleur %>"></td>
                             <td><input class="short-number" type="number" name="delais" value="<%= data[i].delais %>" min="1"></td>
                         </tr>
                     <%  } %>
@@ -77,7 +77,7 @@
         </div>
 
         <script>
-            const webSocket = new WebSocket('ws://192.168.0.50:500/');
+            const webSocket = new WebSocket('ws://192.168.0.20:500/');
             webSocket.addEventListener("open", () => {
                 console.log("Connecté au serveur");
             });
