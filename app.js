@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 
 // si l'utilisateur consulte la branche accueil de l'url
 app.get('/accueil', async(req, res) => {
-    let data = await db.query("SELECT *, (SELECT COUNT(*) FROM scenario WHERE etat = 1) AS nb_scenario_actifs FROM scenario")
+    let data = await db.query("SELECT *, (SELECT COUNT(*) FROM planification WHERE etat = 1) AS nb_scenario_actifs FROM planification")
     if (data === "ERREUR") res.redirect('/erreur')
 
     res.render('accueil', {
@@ -65,17 +65,33 @@ app.get('/scenario/creer', async(req, res) => {
 
     let data = await db.query("SELECT * FROM lampe")
     if (data === "ERREUR") return res.redirect('/erreur')
-    res.render('scenario-creer');
+    res.render('scenario-creer', {
+        data: data, // transmet le résultat de la requête SQL
+    });
 });
 
 // si l'utilisateur regarde plus en détail un scénario
 app.get(['/scenario/view', '/scenario/view:id'], async(req, res) => {
     let id = req.query["id"];
-    let data = await db.query(`SELECT etapes.couleur, etapes.luminosite, lampe.nom AS projecteur, lampe.type, etapes.allume, etapes.num_etape, etapes.nom_etape, etapes.delais FROM etapes INNER JOIN scenario ON scenario.id = etapes.id_scenarios INNER JOIN lampe ON etapes.lampe_id = lampe.id WHERE etapes.id_scenarios = ${id};`)
+    let data = await db.query(`SELECT etapes.id_scenarios AS scenarioId, etapes.couleur, etapes.luminosite, lampe.nom AS projecteur, lampe.type, etapes.allume, etapes.num_etape, etapes.delais FROM etapes INNER JOIN scenario ON scenario.id = etapes.id_scenarios INNER JOIN lampe ON etapes.lampe_id = lampe.id WHERE etapes.id_scenarios = ${id};`)
     if (data === "ERREUR") return res.redirect('/erreur')
 
-    res.render('see-scenario', {
+    res.render('scenario-view', {
         data: data, // transmet le résultat de la requête SQL
+    });
+});
+
+// si l'utilisateur modif un scénario
+app.get(['/scenario/modif', '/scenario/modif:id'], async(req, res) => {
+    let id = req.query["id"];
+    let data = await db.query(`SELECT etapes.id_scenarios AS scenarioId, scenario.nom AS nomScenario, scenario.description AS descriptionScenario, etapes.couleur, etapes.luminosite, lampe.nom AS projecteur, lampe.type, lampe.id AS lampeId, etapes.allume, etapes.num_etape, etapes.delais FROM etapes INNER JOIN scenario ON scenario.id = etapes.id_scenarios INNER JOIN lampe ON etapes.lampe_id = lampe.id WHERE etapes.id_scenarios = ${id};`)
+    if (data === "ERREUR") return res.redirect('/erreur')
+    let projecteurs = await db.query(`SELECT * FROM lampe;`)
+    if (projecteurs === "ERREUR") return res.redirect('/erreur')
+
+    res.render('scenario-modif', {
+        data: data, // transmet le résultat de la requête SQL
+        projecteurs: projecteurs
     });
 });
 
@@ -119,31 +135,72 @@ sockserver.on('connection', ws => {
     ws.on('close', () => console.log('Un client s\'est déconnecté '))
 
     // le serveur reçoit un message
-    ws.on('message', data => {
+    ws.on('message', async data => {
+
         // initialise  un objet à partir de la chaine de caractères
         let objet = JSON.parse(data)
+        console.log(objet)
 
-        console.log(`Nouveau message: \n- Lampe id  : ${objet.id}\n- Type : ${objet.type}\n- Valeur : ${objet.valeur}`)
-
-        // en fonction du type
-        switch(objet.type)
+        // modifier un scénario
+        if (objet?.scenarioId != undefined || objet[0]?.origine === "modif" || objet.origine === "modif")
         {
-            case 'luminosite':
-                lampes.setLuminosite(objet.id, objet.valeur);
-                break;
-
-            case 'couleur': 
-                lampes.setCouleur(objet.id, objet.valeur);
-                break;
-
-            case 'allume': 
-                lampes.allumer(objet.id);
-                break;
-
-            case 'eteindre': 
-                lampes.eteindre(objet.id);
-                break;
+            let scenarioId = objet[0].scenarioId;
+            await db.query(`UPDATE scenario SET nom='${objet[0].nom}', description='${objet[0].description}' WHERE id='${scenarioId}'`)
+            objet.shift();
+            for (let i = 0; i < objet.length; i++) await db.query(`UPDATE etapes SET allume='${objet[i].allume ? "1":"0"}', luminosite='${objet[i].luminosite}', lampe_id='${objet[i].projecteurId}', couleur='${objet[i].couleur}', delais='${objet[i].delais}' WHERE id_scenarios='${scenarioId}' AND num_etape='${objet[i].numeroEtape}'`)
+            
+            return;
         }
+
+        // supprimer un scénario
+        if (objet?.scenarioId != undefined && objet?.origine === "supprimer")
+        {
+            await db.query(`DELETE FROM etapes WHERE id_scenarios='${objet.scenarioId}'`)
+            await db.query(`DELETE FROM scenario WHERE id='${objet.scenarioId}'`)
+            return;
+        }
+
+        // création d'un scénario
+        if (objet[0].description != undefined && objet?.origine === "creer")
+        {
+            console.log("SCENARIO", objet[0])
+            // crée le scénario dans la table scénario
+            let scenario = await db.query(`INSERT INTO scenario (nom, description) VALUES ('${objet[0].nom}', '${objet[0].description}');`)
+            
+            // crée toutes les étapes dans la table etapes
+            objet.shift(); // enlève le premier élément (nom et description du scénario) du tableau des données
+            let etapesListQuery = "";
+            for (let i = 0; i < objet.length; i++) 
+            etapesListQuery+= ` ('${objet[i].numeroEtape}', '${scenario.insertId}', '${objet[i].allume ? "1":"0"}', '${objet[i].luminosite}', '${objet[i].projecteurId}', '${objet[i].couleur}', '${objet[i].delais}')${i != objet.length-1  ? ",":";"} `
+
+            await db.query(`INSERT INTO etapes (num_etape, id_scenarios, allume, luminosite, lampe_id, couleur, delais) VALUES ${etapesListQuery}`)
+            return;
+        }
+        
+        // en fonction du type [LAMPES]
+        if (objet.type)
+        {
+            console.log(`Nouveau message: \n- Lampe id  : ${objet.id}\n- Type : ${objet.type}\n- Valeur : ${objet.valeur}`)
+            switch(objet.type)
+            {
+                case 'luminosite':
+                    lampes.setLuminosite(objet.id, objet.valeur);
+                    break;
+
+                case 'couleur': 
+                    lampes.setCouleur(objet.id, objet.valeur);
+                    break;
+
+                case 'allume': 
+                    lampes.allumer(objet.id);
+                    break;
+
+                case 'eteindre': 
+                    lampes.eteindre(objet.id);
+                    break;
+            }
+        }
+        
     })
 
     // erreur

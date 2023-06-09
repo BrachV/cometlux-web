@@ -27,30 +27,157 @@
                 <input class="button_scenario" type="text" id="scenario_description" placeholder="Description du scénario">
             </div>
         </section>
+    </section>
+    <div class="options-final">
+        <button type="button" onclick="ajouterEtape()" id="ajouter-etape" class="bouton-scenario">Ajouter une étape</button>
+        <button type="button" onclick="supprimerEtape()" id="enlever-etape" class="bouton-scenario">Enlever une étape</button>
+        <button type="button" onclick="creerScenario()" id="creer-scenario" class="bouton-scenario">Créer le scénario</button>
+    </div>
         
-    <section style="padding-top: 40px;">
+    <section>
         <div class="container">
             <table>
                 <caption>Etapes</caption>
                 <thead>
                     <tr>
-                    <th scope="col">Etape n°</th>
-                    <th scope="col">Projecteur concerné</th>
-                    <th scope="col">Lampe</th>
-                    <th scope="col">Allume</th>
-                    <th scope="col">Luminosite</th>
-                    <th scope="col">Couleur</th>
-                    <th scope="col">Delais (s)</th>
+                        <th scope="col">Etape n°</th>
+                        <th scope="col">Projecteur concerné</th>
+                        <th scope="col">Allume</th>
+                        <th scope="col">Luminosite</th>
+                        <th scope="col">Couleur</th>
+                        <th scope="col">Delais (s)</th>
                     </tr>
                 </thead>
-                <tbody style="color: #fff;"> 
+                <tbody id="liste-etapes" style="color: #fff;"> 
+                    <tr class="nonpair">
+                        <td>1</td>
+                        <td>
+                            <select name="projecteur_id" class="creer-select-projecteur">
+                                <option disabled selected value="0">Sélectionne un projecteur</option>
+                                <% for (let i = 0; i < data.length; i++) { %><option value="<%= data[i]['id'] %>" label="<%= data[i]['nom'] %>"></option><% } %>
+                            </select>
+                        </td>
+                        <td><input type="checkbox" class="creer-allume-projecteur" ></td>
+                        <td><input class="short-input-range-luminosite" type="range" name="volume"min="10" max="255" value="125"></td>
+                        <td><input class="short-color" name="couleur" type="color" id="creer-colorpicker" value="#FFFFFF"></td>
+                        <td><input class="short-number" type="number" name="delais" value="1" min="1"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
-        <div style="display: flex; justify-content: center; align-items: center;">
+        
+
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px;">
             <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
         </div>
+
+        <script>
+            const webSocket = new WebSocket('ws://192.168.0.50:500/');
+            webSocket.addEventListener("open", () => {
+                console.log("Connecté au serveur");
+            });
+
+            function ajouterEtape() {
+                let tableau = document.getElementById("liste-etapes");
+                let nouvelleLigne = tableau.insertRow(); 
+
+                // numero etapes
+                let etapeNumero = nouvelleLigne.insertCell(0);
+                let numeroEtape = parseInt(tableau.rows[tableau.rows.length - 2].cells[0].innerHTML) + 1;
+                nouvelleLigne.className = numeroEtape % 2 == 0 ? "pair" : "nonpair";
+                etapeNumero.innerHTML = numeroEtape;
+
+                // combobox pour tous les projecteurs
+                let listeProjecteurs = nouvelleLigne.insertCell();
+                // récupère la liste de projecteurs juste au dessus
+                let ancienSelect = tableau.rows[tableau.rows.length - 2].cells[1].querySelector("select").cloneNode(true);
+                ancienSelect.selectedIndex = 0;
+                listeProjecteurs.appendChild(ancienSelect)
+
+                // choix allume ou non
+                let allume = nouvelleLigne.insertCell();
+                let comboBox = document.createElement("input")
+                comboBox.type = "checkbox";
+                comboBox.className = "creer-allume-projecteur"
+                allume.appendChild(comboBox)
+
+                // choix luminosite
+                let luminosite = nouvelleLigne.insertCell();
+                let choisirLuminosite = document.createElement("input")
+                choisirLuminosite.type = "range";
+                choisirLuminosite.className = "short-input-range-luminosite"
+                choisirLuminosite.min = "10";
+                choisirLuminosite.max = "255";
+                choisirLuminosite.setAttribute('value', "125");
+                choisirLuminosite.name = "volume"
+                choisirLuminosite.className
+                luminosite.appendChild(choisirLuminosite)
+
+                // choix couleur
+                let couleur = nouvelleLigne.insertCell();
+                let choisirCouleur = document.createElement("input")
+                choisirCouleur.type = "color";
+                choisirCouleur.className = "short-color"
+                choisirCouleur.value = "#FFFFFF"
+                choisirCouleur.name = "couleur"
+                couleur.appendChild(choisirCouleur)
+
+                // choix nombres de repetitions
+                let repetitions = nouvelleLigne.insertCell();
+                let choisirNombre = document.createElement("input")
+                choisirNombre.type = "number";
+                choisirNombre.className = "short-number"
+                choisirNombre.value = "1";
+                choisirNombre.min = "1";
+                choisirNombre.name = "delais"
+                repetitions.appendChild(choisirNombre)
+            }
+
+            function supprimerEtape() {
+                let tableau = document.getElementById("liste-etapes");
+                let derniereLigne = tableau.rows.length - 1;
+                let numeroEtape = parseInt(tableau.rows[derniereLigne].cells[0].innerHTML);
+                if (numeroEtape === 1) return alert("Vous ne pouvez pas supprimer la première ligne !")
+                tableau.deleteRow(derniereLigne)
+            }
+
+            function creerScenario() {
+                let nom = document.getElementById("scenario_nom").value
+                // if (!nom) return alert("Merci de donner un nom au scénario.");
+
+                let description = document.getElementById("scenario_description").value
+                // if (!description) return alert("Merci de donner une description au scénario.");
+
+                let etapes = [{
+                    nom: nom, 
+                    description: description,
+                    origine: "créer"
+                }];
+
+                let tableau = document.getElementById("liste-etapes");
+                let valeurs = tableau.querySelectorAll('tr')
+                for (let i = 0; i < valeurs.length; i++)
+                {
+                    let numeroEtape = valeurs[i].cells[0].innerText;
+
+                    let projecteurId = valeurs[i].cells[1].querySelector('select').value;
+                    // if (projecteurId == 0) return alert(`Merci de choisir un projecteur pour l'étape n°${numeroEtape}.`)
+
+                    let allume = valeurs[i].cells[2].querySelector('input').checked;
+                    let luminosite = valeurs[i].cells[3].querySelector('input').value;
+                    let couleur = valeurs[i].cells[4].querySelector('input').value;
+                    let delais = valeurs[i].cells[5].querySelector('input').value;
+
+                    let data = {numeroEtape, projecteurId, allume, luminosite, couleur, delais}
+                    etapes.push(data)
+                }
+                console.log(etapes)
+                webSocket.send(JSON.stringify(etapes))
+                alert("Scénario créé avec succès !")
+                window.location.href = '/scenario'
+            }
+        </script>
 
 </body>
 </html>

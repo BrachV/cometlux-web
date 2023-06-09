@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>CometLux - Scenario (VOIR)</title>
+</head>
+<body>
+    <header class="header">
+        <a href="/accueil" class="logo"><img class="logo_mid" src="../img/mid_logo.png"></a>
+        <input class="menu-btn" type="checkbox" id="menu-btn" />
+        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+        <ul class="menu">
+            <li><a href="/accueil">Accueil</a></li>
+            <li><a href="/lumiere">Lumiere</a></li>
+            <li><a href="/scenario">Scenario</a></li>
+            <li><a href="/logs">Logs</a></li>
+        </ul>
+    </header>
+    <section>
+        <section style="display: flex; flex-direction: column;">
+            <p class="title">Scénarios disponibles</p>
+            <div class="scenario_infos">            
+                <input class="button_scenario" type="text" id="scenario_nom" placeholder="Nom du scénario" value="<%=data[0].nomScenario %>">
+                <input class="button_scenario" type="text" id="scenario_description" placeholder="Description du scénario" value="<%=data[0].descriptionScenario %>">">
+            </div>
+        </section>
+    </section>
+    <div class="options-final">
+        <button type="button" onclick="modifScenario()" id="modif-scenario" class="bouton-scenario">Modifier le scénario</button>
+    </div>
+        
+    <section>
+        <div class="container">
+            <table>
+                <caption>Etapes</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Etape n°</th>
+                        <th scope="col">Projecteur concerné</th>
+                        <th scope="col">Allume</th>
+                        <th scope="col">Luminosite</th>
+                        <th scope="col">Couleur</th>
+                        <th scope="col">Delais (s)</th>
+                    </tr>
+                </thead>
+                <tbody id="liste-etapes" style="color: #fff;"> 
+                    <% for (let i = 0; i < data.length; i++) { %>
+                        <tr class="<%= i % 2 === 1 ? "pair" : "nonpair" %>">
+                            <td><%= data[i].num_etape %></td>
+                            <td>
+                                <select name="projecteur_id" class="creer-select-projecteur">
+                                    <option disabled selected value="0">Sélectionne un projecteur</option>
+                                    <% for (let j = 0; j < projecteurs.length; j++) { %>
+                                        <option value="<%= projecteurs[j]['id'] %>" label="<%= projecteurs[j]['nom'] %>"
+                                            <% for (let k = 0; k < data.length; k++) { %>
+                                                <% if (projecteurs[j].id === data[i].lampeId) { %> selected <% } %>>
+                                            <% } %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" class="creer-allume-projecteur" <%= data[i].allume === 1 ? 'checked' : '' %> ></td>
+                            <td><input class="short-input-range-luminosite" type="range" name="volume"min="10" max="255" value="<%= data[i].luminosite %>"></td>
+                            <td><input class="short-color" name="couleur" type="color" id="creer-colorpicker"  value="<%= data[i].couleur %>"></td>
+                            <td><input class="short-number" type="number" name="delais" value="<%= data[i].delais %>" min="1"></td>
+                        </tr>
+                    <%  } %>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px;">
+            <img class="logo_img" src="../img/logo.png" alt="Logo version miniature">
+        </div>
+
+        <script>
+            const webSocket = new WebSocket('ws://192.168.0.50:500/');
+            webSocket.addEventListener("open", () => {
+                console.log("Connecté au serveur");
+            });
+
+
+            function modifScenario() {
+                let queryString = window.location.search;
+
+                // Créer un objet URLSearchParams à partir de la query string
+                let params = new URLSearchParams(queryString);
+
+                // Récupérer la valeur du paramètre "id"
+                let id = params.get("id");
+
+                let nom = document.getElementById("scenario_nom").value
+                if (!nom) return alert("Merci de donner un nom au scénario.");
+
+                let description = document.getElementById("scenario_description").value
+                if (!description) return alert("Merci de donner une description au scénario.");
+
+                let etapes = [{
+                    nom: nom, 
+                    description: description,
+                    origine: "modif",
+                    scenarioId: id
+                }];
+
+                let tableau = document.getElementById("liste-etapes");
+                let valeurs = tableau.querySelectorAll('tr')
+                for (let i = 0; i < valeurs.length; i++)
+                {
+                    let numeroEtape = valeurs[i].cells[0].innerText;
+
+                    let projecteurId = valeurs[i].cells[1].querySelector('select').value;
+                    if (projecteurId == 0) return alert(`Merci de choisir un projecteur pour l'étape n°${numeroEtape}.`)
+
+                    let allume = valeurs[i].cells[2].querySelector('input').checked;
+                    let luminosite = valeurs[i].cells[3].querySelector('input').value;
+                    let couleur = valeurs[i].cells[4].querySelector('input').value;
+                    let delais = valeurs[i].cells[5].querySelector('input').value;
+
+                    let data = { numeroEtape, projecteurId, allume, luminosite, couleur, delais }
+                    etapes.push(data)
+                }
+
+                console.log(etapes)
+
+                webSocket.send(JSON.stringify(etapes));
+                alert("Scénario modifié avec succès !");
+                window.location.href = '/scenario';
+            }
+        </script>
+
+</body>
+</html>
