@@ -78,13 +78,13 @@
             </div>
         </section>
         <script>
-            const webSocket = new WebSocket('ws://192.168.0.20:500/');
+            const webSocket = new WebSocket('ws://192.168.0.50:500/');
             webSocket.addEventListener("open", () => {
                 console.log("Connecté au serveur");
             });
 
             function creerPlanification() {
-                let nom = document.getElementById("planification_nom").value
+                let nom = document.getElementById("planification_nom").value.replace(/'/g, "\\'")
                 if (!nom) return alert("Merci de donner un nom à la planification.");
 
                 let scenarioId = document.getElementById("scenario_id").value;

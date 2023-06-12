@@ -97,10 +97,11 @@ app.get(['/scenario/modif', '/scenario/modif:id'], async(req, res) => {
 
 
 
-// si l'utilisateur veut créer un scénario
+// si l'utilisateur veut voir les planifications
 app.get('/planification', async(req, res) => {
     let data = await db.query("SELECT * FROM planification")
     if (data === "ERREUR") return res.redirect('/erreur')
+
     res.render('planification', {
         data: data, // transmet le résultat de la requête SQL
     });

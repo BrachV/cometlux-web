@@ -77,7 +77,7 @@
         </div>
 
         <script>
-            const webSocket = new WebSocket('ws://192.168.0.20:500/');
+            const webSocket = new WebSocket('ws://192.168.0.50:500/');
             webSocket.addEventListener("open", () => {
                 console.log("Connecté au serveur");
             });
@@ -92,10 +92,10 @@
                 // Récupérer la valeur du paramètre "id"
                 let id = params.get("id");
 
-                let nom = document.getElementById("scenario_nom").value
+                let nom = document.getElementById("scenario_nom").value.replace(/'/g, "\\'")
                 if (!nom) return alert("Merci de donner un nom au scénario.");
 
-                let description = document.getElementById("scenario_description").value
+                let description = document.getElementById("scenario_description").value.replace(/'/g, "\\'")
                 if (!description) return alert("Merci de donner une description au scénario.");
 
                 let etapes = [{
